@@ -1,0 +1,3 @@
+package cl.felipe.agrofrost.domain.valueobject;
+import cl.felipe.agrofrost.domain.exception.InvalidCriticalTemperatureException; import org.junit.jupiter.params.ParameterizedTest; import org.junit.jupiter.params.provider.ValueSource; import static org.junit.jupiter.api.Assertions.*;
+class CriticalTemperatureTest { @ParameterizedTest @ValueSource(doubles = {-10.0, 0.0, 10.0}) void acceptsInclusiveBounds(double value) { assertEquals(value, new CriticalTemperature(value).value()); } @ParameterizedTest @ValueSource(doubles = {-10.1, 10.1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) void rejectsInvalidValues(double value) { assertThrows(InvalidCriticalTemperatureException.class, () -> new CriticalTemperature(value)); } }

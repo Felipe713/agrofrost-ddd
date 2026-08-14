@@ -1,0 +1,3 @@
+package cl.felipe.agrofrost.domain.valueobject;
+import cl.felipe.agrofrost.domain.exception.InvalidMeasuredTemperatureException; import org.junit.jupiter.params.ParameterizedTest; import org.junit.jupiter.params.provider.ValueSource; import static org.junit.jupiter.api.Assertions.*;
+class MeasuredTemperatureTest { @ParameterizedTest @ValueSource(doubles = {-50.0, 0.0, 60.0}) void acceptsInclusiveBounds(double value) { assertEquals(value, new MeasuredTemperature(value).value()); } @ParameterizedTest @ValueSource(doubles = {-50.1, 60.1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) void rejectsInvalidValues(double value) { assertThrows(InvalidMeasuredTemperatureException.class, () -> new MeasuredTemperature(value)); } }
