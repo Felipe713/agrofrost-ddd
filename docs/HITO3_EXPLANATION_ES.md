@@ -8,6 +8,8 @@ DDD organiza el software alrededor del lenguaje del negocio. El **Ubiquitous Lan
 
 Una **Entity** tiene identidad: `Field` sigue siendo el mismo campo por su `FieldId`. Un **Value Object** vale por sus datos: `CriticalTemperature`, `MeasuredTemperature`, `Crop`, `FieldName`, `FieldId` y `FrostAssessment`. `Field` es el **Aggregate Root** porque protege la evaluación y concentra los cambios del agregado. Los records ayudan porque son inmutables, comparables por valor y no tienen setters.
 
+La igualdad de una Entity se define por identidad. Dos objetos `Field` con el mismo `FieldId` representan la misma entidad aunque cambien nombre, cultivo u otros atributos. En cambio, los Value Objects se comparan por valor: dos records equivalentes contienen los mismos datos.
+
 ## Repositorio e inversión de dependencias
 
 `FieldRepository` describe cómo guardar y obtener `Field` sin SQL ni tecnología; está en domain porque el dominio necesita ese contrato. `InMemoryFieldRepository` está en infrastructure porque es un detalle técnico. En el futuro PostgreSQL puede implementar la misma interfaz sin modificar Domain.
@@ -31,3 +33,5 @@ Hito 3 evoluciona conceptualmente desde Hito 1: conserva reglas y validaciones T
 **¿Dónde vive la regla de riesgo?** En `Field.assessFrost`, no en el caso de uso.
 
 **¿Por qué `Crop` no es enum?** El negocio puede registrar nuevos cultivos sin recompilar el dominio.
+
+**¿Por qué dos objetos `Field` con el mismo `FieldId` son la misma Entity?** Porque una Entity en DDD se define por una identidad estable que permanece durante su ciclo de vida. Sus atributos pueden cambiar sin que deje de representar el mismo objeto de negocio.

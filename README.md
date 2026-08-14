@@ -1,5 +1,7 @@
 # ❄️ AgroFrost DDD — Clean Architecture for Frost Monitoring
 
+[![AgroFrost CI](https://github.com/Felipe713/agrofrost-ddd/actions/workflows/ci.yml/badge.svg)](https://github.com/Felipe713/agrofrost-ddd/actions/workflows/ci.yml)
+
 > Educational Java project for the Java Bootcamp. It demonstrates Domain-Driven Design and Clean Architecture with pure Java; it is not a production frost-alert service.
 
 ## About the Project
@@ -28,6 +30,15 @@ The ubiquitous language uses `Field`, `FieldId`, `Crop`, `CriticalTemperature`, 
 | MeasuredTemperature | Validated observation from -50 to 60 °C |
 | FrostAssessment | Immutable evaluation result |
 
+## 🧩 Entity vs Value Object
+
+| Concept | Identity | Equality | Example |
+| --- | --- | --- | --- |
+| Entity | Has stable identity | Compared by identity | Field |
+| Value Object | No independent identity | Compared by value | CriticalTemperature |
+
+`Field` equality is based only on `FieldId`: two instances with the same identifier represent the same domain Entity. Value Object records use structural equality based on their values.
+
 ## Frost-risk rules
 
 `Field.assessFrost` preserves the rules from Hito 1. The critical threshold and the upper warning threshold are inclusive.
@@ -45,27 +56,57 @@ The table uses a critical temperature of 0 °C and a 2.0 °C warning margin.
 ## Architecture
 
 ```text
-┌─────────────────────────────────────────┐
-│ Infrastructure                          │
-│ InMemoryFieldRepository                 │
-└───────────────────┬─────────────────────┘
-                    │ implements FieldRepository
-                    ▼
-┌─────────────────────────────────────────┐
-│ Application                             │
-│ RegisterFieldUseCase / MonitorFieldUseCase│
-│ TemperatureProvider / FrostAlertNotifier│
-└───────────────────┬─────────────────────┘
-                    │ depends on
-                    ▼
-┌─────────────────────────────────────────┐
-│ Domain                                  │
-│ Field (Aggregate Root), Value Objects   │
-│ FrostRiskLevel, FieldRepository         │
-└─────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│ Application                                  │
+│ RegisterFieldUseCase · MonitorFieldUseCase   │
+│ TemperatureProvider · FrostAlertNotifier     │
+└───────────────────────┬──────────────────────┘
+                        │ depends on
+                        ▼
+┌──────────────────────────────────────────────┐
+│ Domain                                       │
+│ Field (Entity / Aggregate Root)              │
+│ Value Objects · FrostRiskLevel               │
+│ FieldRepository · Domain Exceptions          │
+└───────────────────────▲──────────────────────┘
+                        │ implements FieldRepository
+┌───────────────────────┴──────────────────────┐
+│ Infrastructure                               │
+│ InMemoryFieldRepository                      │
+└──────────────────────────────────────────────┘
 ```
 
-Dependencies point inward. Application knows only the `FieldRepository`, `TemperatureProvider` and `FrostAlertNotifier` interfaces; constructor injection supplies implementations.
+Application depends on Domain models and contracts. `InMemoryFieldRepository` depends on and implements the `FieldRepository` contract declared in Domain. Domain depends on neither Application nor Infrastructure.
+
+## 🗺️ Frost Monitoring Context Map
+
+```mermaid
+flowchart LR
+    Weather[Weather Provider]
+    Persistence[Persistence Adapter]
+    Notification[Notification Adapter]
+    Frontend[Frontend]
+
+    subgraph FrostMonitoring["Frost Monitoring Context"]
+        Field["Field Aggregate Root"]
+        Register["Register Field"]
+        Monitor["Monitor Field"]
+        Assessment["Frost Assessment"]
+        Risk["Frost Risk Level"]
+    end
+
+    Weather --> Monitor
+    Frontend --> Register
+    Frontend --> Monitor
+    Persistence --> Register
+    Persistence --> Monitor
+    Monitor --> Field
+    Field --> Assessment
+    Assessment --> Risk
+    Monitor --> Notification
+```
+
+This map is conceptual. `InMemoryFieldRepository` is the only concrete adapter currently implemented; weather, notifications, and frontend remain abstract or future integrations. The Bounded Context remains independent of those technologies.
 
 ## Package structure
 

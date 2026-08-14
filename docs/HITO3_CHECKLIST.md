@@ -31,3 +31,12 @@
 ## Validaciones manuales
 
 Ejecutadas antes del commit: `mvn clean compile`, `mvn test`, `mvn clean verify`, `git diff --check` y las búsquedas `rg` de imports y construcciones prohibidas. También se revisan los árboles con `find` y el reporte en `target/site/jacoco/index.html`.
+
+## Evidencias adicionales de calidad
+
+- [x] Field implementa igualdad por identidad mediante FieldId.
+- [x] Tests validan Entity equality.
+- [x] ArchitectureRulesTest protege la dirección de dependencias.
+- [ ] CI ejecuta `mvn clean verify` en GitHub Actions.
+- [x] README documenta correctamente las dependencias arquitectónicas.
+- [x] Context Map documenta las fronteras del Frost Monitoring Context.
