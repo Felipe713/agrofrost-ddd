@@ -37,6 +37,6 @@ Ejecutadas antes del commit: `mvn clean compile`, `mvn test`, `mvn clean verify`
 - [x] Field implementa igualdad por identidad mediante FieldId.
 - [x] Tests validan Entity equality.
 - [x] ArchitectureRulesTest protege la dirección de dependencias.
-- [ ] CI ejecuta `mvn clean verify` en GitHub Actions.
+- [x] CI ejecuta `mvn clean verify` en GitHub Actions.
 - [x] README documenta correctamente las dependencias arquitectónicas.
 - [x] Context Map documenta las fronteras del Frost Monitoring Context.
