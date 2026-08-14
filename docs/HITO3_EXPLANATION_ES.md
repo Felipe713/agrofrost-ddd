@@ -22,7 +22,7 @@ La inversión de dependencias significa que los casos de uso dependen de interfa
 
 Hito 3 evoluciona conceptualmente desde Hito 1: conserva reglas y validaciones TDD, pero separa responsabilidades con DDD y Clean Architecture. Son repositorios independientes; no hay dependencia Maven ni de runtime.
 
-## Preguntas que podrían hacerme en la defensa
+## Preguntas frecuentes sobre el diseño
 
 **¿Por qué no Spring?** Para hacer visible el diseño puro antes de incorporar infraestructura.
 
